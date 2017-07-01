@@ -9,10 +9,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import com.drew.imaging.ImageProcessingException;
 import com.github.kaiwinter.exifrename.type.NewFilename;
 import com.github.kaiwinter.exifrename.type.OldFilename;
+import com.github.kaiwinter.exifrename.type.RenameOperation;
 
 /**
  * Processes files and stores the renaming operations as a preview. After the preview is generated the renaming
@@ -30,17 +33,16 @@ import com.github.kaiwinter.exifrename.type.OldFilename;
  * the {@link NewFilename} when the rename operation is executed.
  * </p>
  */
-public final class RenamePreviewResult {
+public final class RenameProcessor {
 
-   private static final Logger LOGGER = LoggerFactory.getLogger(RenamePreviewResult.class.getSimpleName());
+   private static final Logger LOGGER = LoggerFactory.getLogger(RenameProcessor.class.getSimpleName());
 
    private final Map<NewFilename, List<OldFilename>> newFilename2oldFilename = new HashMap<>();
 
    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
 
    /**
-    * Processes the passed file and adds the rename operation to the internal Map. If two files will have the same new
-    * filename, a number will be added to the filename.
+    * Adds the file to the internal Map.
     *
     * @param filepath
     *           the {@link Path} to the file, not <code>null</code>
@@ -49,7 +51,7 @@ public final class RenamePreviewResult {
     * @throws IOException
     *            on errors while accessing the file
     */
-   public void processFile(Path filepath) throws ImageProcessingException, IOException {
+   public void addFile(Path filepath) throws ImageProcessingException, IOException {
       Objects.requireNonNull(filepath);
       if (!Files.isRegularFile(filepath)) {
          LOGGER.warn("'{}' is not a file (skipping)", filepath);
@@ -80,21 +82,21 @@ public final class RenamePreviewResult {
    }
 
    /**
-    * Executes the rename operations from the internal Map.
+    * Creates the {@link RenameOperation}s from the processed files.
     *
-    * @throws IOException
-    *            if an I/O error occurs
+    * @return the {@link RenameOperation}s
     */
-   public void doRename() throws IOException {
+   public Set<RenameOperation> createRenameOperations() {
+      Set<RenameOperation> renameOperations = new HashSet<>();
+
       for (Entry<NewFilename, List<OldFilename>> entrySet : newFilename2oldFilename.entrySet()) {
          NewFilename newFilename = entrySet.getKey();
          List<OldFilename> oldFilenames = entrySet.getValue();
 
          if (oldFilenames.size() == 1) {
             Path oldFilename = oldFilenames.get(0).getPath();
-            Path newFilenamePath = Paths.get(oldFilename.getRoot().toString(), newFilename.getName());
-            LOGGER.info("Rename '{}' to '{}'", oldFilename, newFilenamePath);
-            Files.move(oldFilename, newFilenamePath);
+            Path newFilenamePath = Paths.get(oldFilename.getParent().toString(), newFilename.getName());
+            renameOperations.add(new RenameOperation(oldFilename, newFilenamePath));
          } else {
             int fileNumber = 1;
             for (OldFilename oldFilename : oldFilenames) {
@@ -102,12 +104,13 @@ public final class RenamePreviewResult {
                String dotWithExtension = newFilename.getName().substring(lastIndexOf);
                String newFilenameWithNumber = newFilename.getName().substring(0, lastIndexOf) + "_" + fileNumber++
                   + dotWithExtension;
-               Path newFilenamePath = Paths.get(oldFilename.getPath().getRoot().toString(), newFilenameWithNumber);
-               LOGGER.info("Rename '{}' to '{}'", oldFilename, newFilenamePath);
-               Files.move(oldFilename.getPath(), newFilenamePath);
+               Path newFilenamePath = Paths.get(oldFilename.getPath().getParent().toString(), newFilenameWithNumber);
+               renameOperations.add(new RenameOperation(oldFilename.getPath(), newFilenamePath));
             }
          }
       }
+
+      return renameOperations;
    }
 
    /**

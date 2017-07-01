@@ -2,9 +2,10 @@ package com.github.kaiwinter.exifrename;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Set;
 
 import com.drew.imaging.ImageProcessingException;
-import com.github.kaiwinter.exifrename.uc.RenamePreviewResult;
+import com.github.kaiwinter.exifrename.type.RenameOperation;
 import com.github.kaiwinter.exifrename.uc.RenameUc;
 
 public class Main {
@@ -14,10 +15,10 @@ public class Main {
    public static void main(String[] args) throws ImageProcessingException, IOException {
 
       RenameUc renameUc = new RenameUc();
-      RenamePreviewResult createRenamePreviewResult = renameUc.createRenamePreviewResult(Paths.get("C:/temp/test"));
+      Set<RenameOperation> createRenamePreviewResult = renameUc.createRenameOperations(Paths.get("C:/temp/test"));
 
       if (DO_RENAME) {
-         createRenamePreviewResult.doRename();
+         renameUc.executeRenameOperations(createRenamePreviewResult);
       }
    }
 }
