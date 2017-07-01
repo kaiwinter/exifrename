@@ -1,0 +1,91 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>com.github.kaiwinter</groupId>
+   <artifactId>exifrename</artifactId>
+   <version>1.0.0-SNAPSHOT</version>
+
+   <name>exifrename</name>
+   <description>Renames image files from the exif tags.</description>
+   <url>https://github.com/kaiwinter/exifrename</url>
+
+   <scm>
+      <url>https://github.com/kaiwinter/exifrename</url>
+      <connection>scm:git:git://github.com/kaiwinter/exifrename.git</connection>
+      <developerConnection>scm:git:git@github.com:kaiwinter/exifrename.git</developerConnection>
+   </scm>
+
+   <issueManagement>
+      <url>https://github.com/kaiwinter/exifrename/issues</url>
+      <system>GitHub Issues</system>
+   </issueManagement>
+
+   <licenses>
+      <license>
+         <name>Apache 2</name>
+         <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+         <distribution>repo</distribution>
+      </license>
+   </licenses>
+
+   <properties>
+      <maven.compiler.source>1.8</maven.compiler.source>
+      <maven.compiler.target>1.8</maven.compiler.target>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+   </properties>
+
+   <dependencies>
+      <dependency>
+         <groupId>com.drewnoakes</groupId>
+         <artifactId>metadata-extractor</artifactId>
+         <version>2.10.1</version>
+      </dependency>
+
+      <!-- Logging -->
+      <dependency>
+         <groupId>org.slf4j</groupId>
+         <artifactId>slf4j-api</artifactId>
+         <version>1.7.7</version>
+      </dependency>
+      <dependency>
+         <groupId>ch.qos.logback</groupId>
+         <artifactId>logback-classic</artifactId>
+         <version>1.1.2</version>
+      </dependency>
+      <dependency>
+         <groupId>ch.qos.logback</groupId>
+         <artifactId>logback-core</artifactId>
+         <version>1.1.2</version>
+      </dependency>
+
+      <!-- Testing -->
+      <dependency>
+         <groupId>junit</groupId>
+         <artifactId>junit</artifactId>
+         <version>4.8.1</version>
+         <scope>test</scope>
+      </dependency>
+   </dependencies>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.eluder.coveralls</groupId>
+            <artifactId>coveralls-maven-plugin</artifactId>
+            <version>4.3.0</version>
+         </plugin>
+         <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>cobertura-maven-plugin</artifactId>
+            <version>2.7</version>
+            <configuration>
+               <format>xml</format>
+               <maxmem>256m</maxmem>
+               <!-- aggregated reports for multi-module projects -->
+               <aggregate>true</aggregate>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
+
+</project>
