@@ -7,6 +7,7 @@ import java.util.Objects;
  * file name.
  */
 public final class NewFilename {
+
    private final String name;
 
    /**
@@ -15,7 +16,7 @@ public final class NewFilename {
     * @param name
     *           the name of the new file.
     */
-   public NewFilename(String name) {
+   private NewFilename(String name) {
       Objects.requireNonNull(name);
       this.name = name;
    }

@@ -17,7 +17,7 @@ public final class OldFilename {
     * @param path
     *           the path to the old file
     */
-   public OldFilename(Path path) {
+   private OldFilename(Path path) {
       Objects.requireNonNull(path);
       this.path = path;
    }

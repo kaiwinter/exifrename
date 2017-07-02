@@ -32,10 +32,8 @@ public final class RenameUc {
     * @return the {@link RenameOperation}s
     * @throws IOException
     *            if an I/O error occurs
-    * @throws ImageProcessingException
-    *            for general processing errors
     */
-   public Set<RenameOperation> createRenameOperations(Path directory) throws IOException, ImageProcessingException {
+   public Set<RenameOperation> createRenameOperationsForDirectory(Path directory) throws IOException {
       RenameProcessor renameProcessor = new RenameProcessor();
       if (!Files.isDirectory(directory)) {
          LOGGER.error("'{}' is not a directory", directory);
@@ -46,7 +44,11 @@ public final class RenameUc {
       Iterator<Path> iterator = newDirectoryStream.iterator();
       while (iterator.hasNext()) {
          Path filepath = iterator.next();
-         renameProcessor.addFile(filepath);
+         try {
+            renameProcessor.addFile(filepath);
+         } catch (ImageProcessingException e) {
+            LOGGER.error("Error while processing file '{}': {}", filepath, e.getMessage());
+         }
       }
 
       Set<RenameOperation> createRenameOperations = renameProcessor.createRenameOperations();
