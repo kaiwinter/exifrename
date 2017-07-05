@@ -54,12 +54,12 @@ public final class RenameProcessor {
    public void addFile(Path filepath) throws ImageProcessingException, IOException {
       Objects.requireNonNull(filepath);
       if (!Files.isRegularFile(filepath)) {
-         LOGGER.warn("'{}' is not a file (skipping)", filepath);
+         LOGGER.warn("'{}' is not a file (skipping)", filepath.getFileName());
       }
       ExifMetadataSource metadataExtractor = new ExifMetadataSource();
       Date date = metadataExtractor.getDateTimeOriginal(filepath);
       if (date == null) {
-         LOGGER.warn("No date set for image '{}' (ignoring image)", filepath);
+         LOGGER.warn("{}: No date set for image", filepath.getFileName());
          return;
       }
 

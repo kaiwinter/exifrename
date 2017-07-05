@@ -45,7 +45,8 @@
 
 	<modules>
 		<module>core</module>
-	</modules>
+		<module>ui</module>
+</modules>
 
 	<dependencies>
 

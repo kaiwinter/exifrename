@@ -39,8 +39,11 @@ public final class ExifMetadataSource {
       Metadata metadata = ImageMetadataReader.readMetadata(filepath.toFile());
       Collection<ExifSubIFDDirectory> directoriesOfType = metadata.getDirectoriesOfType(ExifSubIFDDirectory.class);
 
-      if (directoriesOfType.size() > 1) {
-         LOGGER.error("More than one ExifIFD0Directory");
+      if (directoriesOfType.size() == 0) {
+         LOGGER.warn("{}: No exif header in file", filepath.getFileName());
+         return null;
+      } else if (directoriesOfType.size() > 1) {
+         LOGGER.error("{}: More than one ExifIFD0Directory in file", filepath.getFileName());
       }
 
       ExifSubIFDDirectory exifSubIFDDirectory = directoriesOfType.iterator().next();

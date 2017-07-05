@@ -3,6 +3,7 @@ package com.github.kaiwinter.exifrename.uc;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Iterator;
@@ -33,21 +34,30 @@ public final class RenameUc {
     * @throws IOException
     *            if an I/O error occurs
     */
-   public Set<RenameOperation> createRenameOperationsForDirectory(Path directory) throws IOException {
+   public Set<RenameOperation> createRenameOperationsForDirectory(Path directory) {
       RenameProcessor renameProcessor = new RenameProcessor();
       if (!Files.isDirectory(directory)) {
-         LOGGER.error("'{}' is not a directory", directory);
+         LOGGER.error("{}: not a directory", directory);
          return Collections.emptySet();
       }
-      DirectoryStream<Path> newDirectoryStream = Files.newDirectoryStream(directory);
+      DirectoryStream<Path> newDirectoryStream;
+      try {
+         newDirectoryStream = Files.newDirectoryStream(directory);
+      } catch (IOException e) {
+         LOGGER.error("{}: error while accessing directory ({})", directory, e.getMessage());
+         return Collections.emptySet();
+      }
 
       Iterator<Path> iterator = newDirectoryStream.iterator();
       while (iterator.hasNext()) {
          Path filepath = iterator.next();
+         if (Files.isDirectory(filepath)) {
+            continue;
+         }
          try {
             renameProcessor.addFile(filepath);
-         } catch (ImageProcessingException e) {
-            LOGGER.error("Error while processing file '{}': {}", filepath, e.getMessage());
+         } catch (ImageProcessingException | IOException e) {
+            LOGGER.error("{}: Error while processing file ({})", filepath.getFileName(), e.getMessage());
          }
       }
 
@@ -56,12 +66,18 @@ public final class RenameUc {
       return createRenameOperations;
    }
 
-   public void executeRenameOperations(Set<RenameOperation> renameOperations) throws IOException {
+   public void executeRenameOperations(Set<RenameOperation> renameOperations) {
       for (RenameOperation renameOperation : renameOperations) {
          Path oldFilename = renameOperation.getOldFilename();
          Path newFilenamePath = renameOperation.getNewFilenamePath();
          LOGGER.info("Rename '{}' to '{}'", oldFilename, newFilenamePath);
-         Files.move(oldFilename, newFilenamePath);
+         try {
+            Files.move(oldFilename, newFilenamePath);
+         } catch (NoSuchFileException e) {
+            LOGGER.error("{}: Error while renaming (file not found)", oldFilename.getFileName());
+         } catch (IOException e) {
+            LOGGER.error("{}: Error while renaming ({})", oldFilename.getFileName(), e.getMessage());
+         }
       }
    }
 
