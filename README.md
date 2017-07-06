@@ -20,3 +20,6 @@ Uses [metadata-extractor](https://github.com/drewnoakes/metadata-extractor) whic
   * RW2 (Panasonic)
   * RWL (Leica)
   * SRW (Samsung)
+ 
+## Screenshot
+![screenshot](screenshot.png)
