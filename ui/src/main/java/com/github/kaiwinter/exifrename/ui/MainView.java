@@ -3,6 +3,7 @@ package com.github.kaiwinter.exifrename.ui;
 import java.io.File;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.Date;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -41,6 +42,9 @@ public final class MainView implements FxmlView<MainViewModel>, Initializable {
     private TableColumn<TableModel, String> tcolOriginalName;
 
     @FXML
+    private TableColumn<TableModel, Date> tcolExifDate;
+
+    @FXML
     private TableColumn<TableModel, String> tcolNewName;
 
     @FXML
@@ -58,6 +62,13 @@ public final class MainView implements FxmlView<MainViewModel>, Initializable {
             @Override
             public String getValue() {
                 return value.getValue().getOriginalName();
+            }
+        });
+
+        tcolExifDate.setCellValueFactory(value -> new ObservableValueBase<Date>() {
+            @Override
+            public Date getValue() {
+                return value.getValue().getExifOriginalDate();
             }
         });
 

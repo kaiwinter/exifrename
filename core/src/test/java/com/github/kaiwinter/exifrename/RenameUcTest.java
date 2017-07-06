@@ -11,6 +11,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -90,8 +91,8 @@ public class RenameUcTest {
       Files.write(hello, "".getBytes());
 
       Set<RenameOperation> renameOperations = new HashSet<>();
-      renameOperations
-         .add(new RenameOperation(fs.getPath("/dir", "IMG_12345.jpg"), fs.getPath("/dir", "20160701_2336.jpg")));
+      renameOperations.add(
+         new RenameOperation(fs.getPath("/dir", "IMG_12345.jpg"), fs.getPath("/dir", "20160701_2336.jpg"), new Date()));
 
       RenameUc renameUc = new RenameUc();
       renameUc.executeRenameOperations(renameOperations);

@@ -1,5 +1,8 @@
 package com.github.kaiwinter.exifrename.type;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Date;
 import java.util.Objects;
 
 /**
@@ -8,17 +11,20 @@ import java.util.Objects;
  */
 public final class NewFilename {
 
-   private final String name;
+   private final Path path;
+   private final Date exifOriginalDate;
 
    /**
     * Constructs a new {@link NewFilename}.
     *
-    * @param name
-    *           the name of the new file.
+    * @param path
+    *           the path of the new file.
+    * @param exifOriginalDate
     */
-   private NewFilename(String name) {
-      Objects.requireNonNull(name);
-      this.name = name;
+   private NewFilename(Path path, Date exifOriginalDate) {
+      this.exifOriginalDate = exifOriginalDate;
+      Objects.requireNonNull(path);
+      this.path = path;
    }
 
    /**
@@ -26,29 +32,35 @@ public final class NewFilename {
     *
     * @param name
     *           the name of the new file
+    * @param exifOriginalDate
+    *           the exif original date
     * @return a {@link NewFilename} object
     */
-   public static NewFilename of(String name) {
-      return new NewFilename(name);
+   public static NewFilename of(Path name, Date exifOriginalDate) {
+      return new NewFilename(name, exifOriginalDate);
    }
 
    /**
-    * @return the name of the new file
+    * @return the path of the new file
     */
-   public String getName() {
-      return name;
+   public Path getPath() {
+      return path;
+   }
+
+   public Date getExifOriginalDate() {
+      return exifOriginalDate;
    }
 
    @Override
    public String toString() {
-      return name.toString();
+      return path.toString();
    }
 
    @Override
    public int hashCode() {
       final int prime = 31;
       int result = 1;
-      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((path == null) ? 0 : path.hashCode());
       return result;
    }
 
@@ -61,11 +73,19 @@ public final class NewFilename {
       if (getClass() != obj.getClass())
          return false;
       NewFilename other = (NewFilename) obj;
-      if (name == null) {
-         if (other.name != null)
+      if (path == null) {
+         if (other.path != null)
             return false;
-      } else if (!name.equals(other.name))
+      } else if (!path.equals(other.path))
          return false;
       return true;
+   }
+
+   public NewFilename createNewFilenameWithNumber(int fileNumber) {
+      int lastIndexOf = path.toString().lastIndexOf('.');
+      String dotWithExtension = path.toString().substring(lastIndexOf);
+      String newFilenameWithNumber = path.toString().substring(0, lastIndexOf) + "_" + fileNumber++ + dotWithExtension;
+
+      return NewFilename.of(Paths.get(newFilenameWithNumber), exifOriginalDate);
    }
 }

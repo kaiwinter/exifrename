@@ -1,7 +1,6 @@
 package com.github.kaiwinter.exifrename.ui;
 
 import java.io.File;
-import java.util.Date;
 import java.util.Set;
 
 import com.github.kaiwinter.exifrename.type.RenameOperation;
@@ -30,8 +29,7 @@ public final class MainViewModel implements ViewModel {
         for (RenameOperation renameOperation : renameOperations) {
             TableModel tm = new TableModel();
             tm.setOriginalName(renameOperation.getOldFilename().getFileName().toString());
-            // FIXME KW:
-            tm.setExifOriginalDate(new Date());
+            tm.setExifOriginalDate(renameOperation.getExifOriginalDate());
             tm.setNewName(renameOperation.getNewFilenamePath().getFileName().toString());
 
             files.add(tm);

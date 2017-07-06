@@ -63,11 +63,12 @@ public final class RenameProcessor {
          return;
       }
 
+      OldFilename oldFilename = OldFilename.of(filepath);
       String formattedDate = simpleDateFormat.format(date);
 
-      int lastIndexOf = filepath.getFileName().toString().lastIndexOf('.');
-      String extension = filepath.getFileName().toString().substring(lastIndexOf + 1);
-      NewFilename newFilename = NewFilename.of(formattedDate + "." + extension);
+      String extension = oldFilename.getExtension();
+      Path newFilenamePath = Paths.get(oldFilename.getPath().getParent().toString(), formattedDate + "." + extension);
+      NewFilename newFilename = NewFilename.of(newFilenamePath, date);
       LOGGER.debug("Parsed date/time from file '{}': {}, new filename: '{}'", filepath, simpleDateFormat.format(date),
          newFilename);
 
@@ -78,7 +79,7 @@ public final class RenameProcessor {
       } else {
          LOGGER.debug("Collision in new Filename: {}", newFilename);
       }
-      oldFilenames.add(OldFilename.of(filepath));
+      oldFilenames.add(oldFilename);
    }
 
    /**
@@ -95,17 +96,14 @@ public final class RenameProcessor {
 
          if (oldFilenames.size() == 1) {
             Path oldFilename = oldFilenames.get(0).getPath();
-            Path newFilenamePath = Paths.get(oldFilename.getParent().toString(), newFilename.getName());
-            renameOperations.add(new RenameOperation(oldFilename, newFilenamePath));
+            Path newFilenamePath = newFilename.getPath();
+            renameOperations.add(new RenameOperation(oldFilename, newFilenamePath, newFilename.getExifOriginalDate()));
          } else {
             int fileNumber = 1;
             for (OldFilename oldFilename : oldFilenames) {
-               int lastIndexOf = newFilename.getName().lastIndexOf('.');
-               String dotWithExtension = newFilename.getName().substring(lastIndexOf);
-               String newFilenameWithNumber = newFilename.getName().substring(0, lastIndexOf) + "_" + fileNumber++
-                  + dotWithExtension;
-               Path newFilenamePath = Paths.get(oldFilename.getPath().getParent().toString(), newFilenameWithNumber);
-               renameOperations.add(new RenameOperation(oldFilename.getPath(), newFilenamePath));
+               NewFilename newFilenameWithNumber = newFilename.createNewFilenameWithNumber(fileNumber++);
+               renameOperations.add(new RenameOperation(oldFilename.getPath(), newFilenameWithNumber.getPath(),
+                  newFilename.getExifOriginalDate()));
             }
          }
       }

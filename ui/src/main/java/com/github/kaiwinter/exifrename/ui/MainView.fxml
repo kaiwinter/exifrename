@@ -32,6 +32,7 @@
       <TableView fx:id="tvFiles" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="3" GridPane.rowIndex="1">
         <columns>
           <TableColumn fx:id="tcolOriginalName" prefWidth="75.0" text="Filename" />
+          <TableColumn fx:id="tcolExifDate" prefWidth="114.0" text="Exif original date" />
             <TableColumn fx:id="tcolNewName" prefWidth="114.0" text="New Filename Preview" />
         </columns>
          <columnResizePolicy>

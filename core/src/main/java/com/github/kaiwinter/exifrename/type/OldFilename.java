@@ -40,6 +40,15 @@ public final class OldFilename {
       return path;
    }
 
+   /**
+    * @return the file extension
+    */
+   public String getExtension() {
+      int lastIndexOf = path.getFileName().toString().lastIndexOf('.');
+      String extension = path.getFileName().toString().substring(lastIndexOf + 1);
+      return extension;
+   }
+
    @Override
    public String toString() {
       return path.toString();

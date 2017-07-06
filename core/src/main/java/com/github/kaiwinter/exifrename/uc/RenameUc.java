@@ -2,6 +2,7 @@ package com.github.kaiwinter.exifrename.uc;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -75,6 +76,8 @@ public final class RenameUc {
             Files.move(oldFilename, newFilenamePath);
          } catch (NoSuchFileException e) {
             LOGGER.error("{}: Error while renaming (file not found)", oldFilename.getFileName());
+         } catch (FileAlreadyExistsException e) {
+            LOGGER.error("{}: Error while renaming (target file already exists)", oldFilename.getFileName());
          } catch (IOException e) {
             LOGGER.error("{}: Error while renaming ({})", oldFilename.getFileName(), e.getMessage());
          }
