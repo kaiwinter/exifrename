@@ -7,8 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.Comparator;
 import java.util.Set;
+import java.util.stream.StreamSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,18 +50,16 @@ public final class RenameUc {
          return Collections.emptySet();
       }
 
-      Iterator<Path> iterator = newDirectoryStream.iterator();
-      while (iterator.hasNext()) {
-         Path filepath = iterator.next();
-         if (Files.isDirectory(filepath)) {
-            continue;
-         }
+      StreamSupport.stream(newDirectoryStream.spliterator(), false)
+        .sorted(Comparator.naturalOrder())
+        .filter(file -> Files.isRegularFile(file))
+        .forEach(file -> {
          try {
-            renameProcessor.addFile(filepath);
+            renameProcessor.addFile(file);
          } catch (ImageProcessingException | IOException e) {
-            LOGGER.error("{}: Error while processing file ({})", filepath.getFileName(), e.getMessage());
+            LOGGER.error("{}: Error while processing file ({})", file.getFileName(), e.getMessage());
          }
-      }
+      });
 
       Set<RenameOperation> createRenameOperations = renameProcessor.createRenameOperations();
 

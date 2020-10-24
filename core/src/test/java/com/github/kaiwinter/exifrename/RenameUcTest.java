@@ -17,8 +17,6 @@ import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.github.kaiwinter.exifrename.type.RenameOperation;
 import com.github.kaiwinter.exifrename.uc.RenameUc;
@@ -29,8 +27,6 @@ import com.google.common.jimfs.Jimfs;
  * Tests for {@link RenameUc}.
  */
 public class RenameUcTest {
-
-  private static final Logger LOGGER = LoggerFactory.getLogger(RenameUcTest.class.getSimpleName());
 
    /**
     * The directory contains two images which have different date/time originals.
@@ -67,13 +63,10 @@ public class RenameUcTest {
       URL resource = RenameUcTest.class.getResource("/same_datetime_original");
       Path path = Paths.get(resource.toURI());
       Set<RenameOperation> renameOperations = renameUc.createRenameOperationsForDirectory(path);
-      LOGGER.error(renameOperations.toString());
 
       assertTrue(renameOperations.stream().anyMatch(item -> {
          Path oldName = Paths.get(path.toString(), "image_1.jpg");
-         LOGGER.error("Old Name: {}", oldName);
          Path expectedNewName = Paths.get(path.toString(), "20170701_130000_1.jpg");
-         LOGGER.error("expectedNewName: {}", expectedNewName);
          return (oldName).equals(item.getOldFilename()) && (expectedNewName).equals(item.getNewFilenamePath());
       }));
 
