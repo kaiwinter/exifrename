@@ -64,4 +64,8 @@ public final class RenameOperation {
       return true;
    }
 
+   @Override
+   public String toString() {
+      return "RenameOperation [oldFilename=" + oldFilename + ", newFilenamePath=" + newFilenamePath + ", exifOriginalDate=" + exifOriginalDate + "]";
+   }
 }
