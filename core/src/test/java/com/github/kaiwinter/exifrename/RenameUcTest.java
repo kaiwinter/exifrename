@@ -1,7 +1,7 @@
 package com.github.kaiwinter.exifrename;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -15,8 +15,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.github.kaiwinter.exifrename.type.RenameOperation;
 import com.github.kaiwinter.exifrename.uc.RenameUc;
@@ -26,13 +25,13 @@ import com.google.common.jimfs.Jimfs;
 /**
  * Tests for {@link RenameUc}.
  */
-public class RenameUcTest {
+class RenameUcTest {
 
    /**
     * The directory contains two images which have different date/time originals.
     */
    @Test
-   public void twoDifferentImages() throws IOException, URISyntaxException {
+   void twoDifferentImages() throws IOException, URISyntaxException {
 
       RenameUc renameUc = new RenameUc();
       URL resource = RenameUcTest.class.getResource("/two_different_images");
@@ -82,7 +81,7 @@ public class RenameUcTest {
     * according to the {@link RenameOperation}.
     */
    @Test
-   public void executeRenameOperations() throws IOException {
+   void executeRenameOperations() throws IOException {
       FileSystem fs = Jimfs.newFileSystem(Configuration.unix());
       Path foo = fs.getPath("/dir");
       Files.createDirectory(foo);
@@ -105,21 +104,21 @@ public class RenameUcTest {
     * If no directory is passed the method should return an empty Set.
     */
    @Test
-   public void noDirectory() throws URISyntaxException, IOException {
+   void noDirectory() throws URISyntaxException, IOException {
       URL resource = RenameUcTest.class.getResource("/same_datetime_original");
       Path path = Paths.get(resource.toURI());
       path = path.resolve("image1.jpg");
 
       RenameUc renameUc = new RenameUc();
       Set<RenameOperation> renameOperations = renameUc.createRenameOperationsForDirectory(path);
-      Assert.assertTrue(renameOperations.isEmpty());
+      assertTrue(renameOperations.isEmpty());
    }
 
    /**
     * Files in the directory which aren't images should be ignored.
     */
    @Test
-   public void wrongFileformat() throws URISyntaxException, IOException {
+   void wrongFileformat() throws URISyntaxException, IOException {
       URL resource = RenameUcTest.class.getResource("/wrong_fileformat");
       Path path = Paths.get(resource.toURI());
 
