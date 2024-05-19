@@ -1,4 +1,4 @@
-open module com.github.kaiwinter.exifrename.ui {
+open module ui {
 	requires org.slf4j;
 	requires de.saxsys.mvvmfx;
 	requires javafx.fxml;
